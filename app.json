@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.alex06.webcloudynov"
+      "package": "com.sinclqir.webcloudynov"
     },
     "web": {
       "favicon": "./assets/favicon.png"
