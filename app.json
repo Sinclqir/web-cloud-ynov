@@ -4,7 +4,7 @@
       "baseUrl": "/webcloudynov"
     },
     "name": "web-cloud-ynov",
-    "slug": "web-cloud-ynov",
+    "slug": "web-cloud-ynov2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,8 +32,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3f89de25-aefb-4321-b623-0eca80426fc0"
+        "projectId": "c532f593-0de7-4404-bf49-c94e5799665a"
       }
-    }
+    },
+    "owner": "sinclqir"
   }
 }
