@@ -10,7 +10,7 @@ web-build/
 
 # Native
 *.orig.*
-*.jks
+*.jksnp
 *.p8
 *.p12
 *.key
