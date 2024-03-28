@@ -1,10 +1,10 @@
 {
   "expo": {
     "experiments": {
-      "baseUrl": "/webcloudynov"
+      "baseUrl": "/web-cloud-ynov"
     },
     "name": "web-cloud-ynov",
-    "slug": "web-cloud-ynov2",
+    "slug": "web-cloud-ynov",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,9 +32,8 @@
     },
     "extra": {
       "eas": {
-        "projectId": "c532f593-0de7-4404-bf49-c94e5799665a"
+        "projectId": "1610bcb0-3b76-4270-ad4f-80b34c28b299"
       }
-    },
-    "owner": "sinclqir"
+    }
   }
 }
