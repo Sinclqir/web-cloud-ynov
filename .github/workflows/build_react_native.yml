@@ -1,5 +1,4 @@
 name: Build and Test React Application
-
 on:
   push:
     branches: [ main ]
@@ -13,49 +12,44 @@ jobs:
       matrix:
         node-version: [20.x]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-
       - name: npm ci, build and test
         run: |
           npm i
           npm run predeploy
-
       - name: Setup pages
         id: pages
         uses: actions/configure-pages@v3
-
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/Upload-pages-artifact@v2
         with:
           path: dist
           if-no-files-found: error
-
       - name: Setup eas
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
-          token: ${{ secrets.git_token }}
-
+          token: ${{ secrets.EXPO_TOKEN }}
       - name: Install dependencies
         run: npm i
-
+      # - name: Build App
+      #   run: eas build --platform android
+      
   deploy:
-    name: Deploy to GitHub Pages
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{steps.deployment.output.page_url}}
     runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
     needs: build_test
     steps:
-      - name: Deployment
+      - name: Deploy to Github pages
         id: deployment
         uses: actions/deploy-pages@v2
+    
