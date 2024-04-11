@@ -1,12 +1,12 @@
-import { RootSiblingParent } from 'react-native-root-siblings';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Link } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Linking } from 'react-native';
 import { signup } from '../auth_signup_password';
 import { signin } from '../auth_signin_password';
 import { signwithgithub } from '../auth_signin_popup';
 import Toast from 'react-native-root-toast';
 import { loginWithPhoneNumber } from '../auth_phone_signin';
 import { verifyCode } from '../auth_verify_code';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 export default function App() {
     const [email, onChangeEmail] = React.useState("");
@@ -51,18 +51,18 @@ export default function App() {
     };
 
     const handleSigninGitHub = () => {
-        signwithgithub()
+        signwithgithub();
     };
 
     const handleSigninPhoneNumber = () => {
-        loginWithPhoneNumber(phoneNumber)
+        loginWithPhoneNumber(phoneNumber);
     };
 
     return (
         <RootSiblingParent>
             <View style={styles.container}>
-                <Link href="/about">About</Link>
-                <Link href="/user/bacon">View user</Link>
+                <Text onPress={() => Linking.openURL('/about')}>About</Text>
+                <Text onPress={() => Linking.openURL('/user/bacon')}>View user</Text>
                 <Text>Email</Text>
                 <TextInput style={styles.input} onChangeText={onChangeEmail} value={email}></TextInput>
                 <Text>Mot de passe</Text>
@@ -73,30 +73,24 @@ export default function App() {
                 <TouchableOpacity style={styles.button} onPress={handleSignin}>
                     <Text style={styles.buttonText}>Connexion</Text>
                 </TouchableOpacity>
-
                 <TouchableOpacity style={styles.link} onPress={handleSigninGitHub}>
                     <Text style={styles.linkText}>Connexion avec GitHub</Text>
                 </TouchableOpacity>
-                <br></br>
                 <Text>Numéro de téléphone</Text>
                 <TextInput style={styles.input} onChangeText={onChangePhoneNumber} value={phoneNumber}></TextInput>
-                <TouchableOpacity style={styles.link} onPress={() => loginWithPhoneNumber(phoneNumber)}>
+                <TouchableOpacity style={styles.link} onPress={handleSigninPhoneNumber}>
                     <Text style={styles.linkText}>Connexion avec téléphone</Text>
                 </TouchableOpacity>
-
-                <div id='recaptcha-container'></div>
-
                 <Text>code</Text>
                 <TextInput style={styles.input} onChangeText={onChangeCode} value={code}></TextInput>
                 <TouchableOpacity style={styles.button} onPress={() => verifyCode(code)}>
                     <Text style={styles.buttonText}>Vérifier le code</Text>
                 </TouchableOpacity>
-
             </View>
         </RootSiblingParent>
-
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
