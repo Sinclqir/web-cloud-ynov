@@ -1,7 +1,8 @@
 {
   "expo": {
+    "scheme": "webcloudynov",
     "experiments": {
-      "baseUrl": "/web-cloud-ynov"
+      "baseUrl": "/webcloudynov"
     },
     "name": "web-cloud-ynov",
     "slug": "web-cloud-ynov",
@@ -28,11 +29,13 @@
       "package": "com.sinclqir.webcloudynov"
     },
     "web": {
+      "bundler": "metro",
+      "output": "static",
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "1610bcb0-3b76-4270-ad4f-80b34c28b299"
+        "projectId": "3f89de25-aefb-4321-b623-0eca80426fc0"
       }
     }
   }
