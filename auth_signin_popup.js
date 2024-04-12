@@ -1,32 +1,31 @@
-import Toast from "react-native-root-toast";
+
 import "./firebaseConfig";
 import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
 import { provider } from "./auth_github_provider_create";
 
 const auth = getAuth();
 export const signwithgithub = () => {
+    console.log("signinWithGithub");
     signInWithPopup(auth, provider)
         .then((result) => {
+            // This gives you a GitHub Access Token. You can use it to access the GitHub API.
             const credential = GithubAuthProvider.credentialFromResult(result);
-            const token = credential.token;
-            const user = result.user;
-            Toast.show("Connexion avec GitHub OK !", {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.BOTTOM,
-                shadow: true,
-                animation: false,
-                hideOnPress: true,
-            });
-        })
-        .catch((error) => {
-            const credential = GithubAuthProvider.credentialFromError(error)
-            Toast.show("Erreur d'authentification avec GitHub", {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.BOTTOM,
-                shadow: true,
-                animation: false,
-                hideOnPress: true,
-            });
+            const token = credential.accessToken;
 
+            // The signed-in user info.
+            const user = result.user;
+            // IdP data available using getAdditionalUserInfo(result)
+            // ...
+            console.log("signin success with github")
+        }).catch((error) => {
+            console.log('error');
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GithubAuthProvider.credentialFromError(error);
+            // ...
         });
 }
