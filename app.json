@@ -2,7 +2,7 @@
   "expo": {
     "scheme": "webcloudynov",
     "experiments": {
-      "baseUrl": "/webcloudynov"
+      "baseUrl": "/web-cloud-ynov"
     },
     "name": "web-cloud-ynov",
     "slug": "web-cloud-ynov",
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sinclqir.webcloudynov"
+      "package": "com.sinclqir.web-cloud-ynov"
     },
     "web": {
       "bundler": "metro",
