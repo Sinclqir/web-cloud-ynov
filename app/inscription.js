@@ -5,7 +5,7 @@ import { signup } from '../auth/auth_signup_password';
 import { uploadToFirebase } from '../storage_upload_file';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import { onAuthStateChanged } from 'firebase/auth'; // Ajout de l'import pour onAuthStateChanged
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function App() {
     const [email, setEmail] = useState("");
@@ -38,7 +38,7 @@ export default function App() {
                     const fileName = email.split("@")[0]; 
                     photoURL = await uploadToFirebase(image, fileName);
                 }
-                await signup(email, password, name, photoURL); // Passer le nom et l'image à la fonction signup
+                await signup(email, password, name, photoURL);
                 navigation.replace('/profil');
             } catch (error) {
                 console.error("Signup error:", error);
