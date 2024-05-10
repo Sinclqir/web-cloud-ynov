@@ -1,4 +1,4 @@
-import "./firebaseConfig";
+import "../firebase/firebaseConfig";
 import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from 'firebase/auth';
 
 const auth = getAuth();

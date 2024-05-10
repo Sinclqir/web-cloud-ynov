@@ -1,124 +1,108 @@
-import { RootSiblingParent } from 'react-native-root-siblings';
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Link } from 'react-native';
-import { signup } from '../auth_signup_password';
-import { signin } from '../auth_signin_password';
-import { signwithgithub } from '../auth_signin_popup';
-import Toast from 'react-native-root-toast';
-import { loginWithPhoneNumber } from '../auth_phone_signin';
-import { verifyCode } from '../auth_verify_code';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, collection, doc, getDocs, addDoc } from "firebase/firestore";
+import { getPostData } from '../post/getpost';
+export default function PostPage() {
+    const [posts, setPosts] = useState([]);
+    const [user, setUser] = useState(null);
+    const auth = getAuth();
+    const db = getFirestore();
 
-export default function App() {
-    const [email, onChangeEmail] = React.useState("");
-    const [password, onChangePassword] = React.useState("");
-    const [phoneNumber, onChangePhoneNumber] = React.useState("");
-    const [code, onChangeCode] = React.useState("");
+    useEffect(() => {
+        onAuthStateChanged(auth, (newUser) => {
+            setUser(newUser);
+        });
 
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
+        const fetchData = async () => {
+            const data = await getPostData();
+            const postsWithComments = await Promise.all(data.map(async post => {
+                const commentSnap = await getDocs(collection(db, `posts/${post.id}/comments`));
+                return { ...post, comments: commentSnap.docs.map(doc => doc.data()), newComment: '' };
+            }));
+            setPosts(postsWithComments);
+        };
+        fetchData();
+    }, []);
 
-    const validatePassword = (password) => {
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-        return passwordRegex.test(password);
-    };
-
-    const handleSignup = () => {
-        if (!validateEmail(email)) {
-            Toast.show("Mail invalide", Toast.SHORT); // Utilisation de la nouvelle bibliothèque
-        } else if (!validatePassword(password)) {
-            Toast.show("Le mot de passe doit contenir au moins 8 caractères avec au moins une majuscule et un chiffre", Toast.SHORT); // Utilisation de la nouvelle bibliothèque
-        } else {
-           signup(email, password);
+    const addComment = async (postId, newComment) => {
+        if (user && newComment) {
+            const commentRef = collection(db, `posts/${postId}/comments`);
+            await addDoc(commentRef, {
+                email: user.email,
+                text: newComment,
+                createdAt: new Date()
+            });
+            const updatedPosts = posts.map(post => {
+                if (post.id === postId) {
+                    return {...post, comments: [...post.comments, { email: user.email, text: newComment }], newComment: ''};
+                }
+                return post;
+            });
+            setPosts(updatedPosts);
         }
     };
 
-    const handleSignin = () => {
-        signin(email, password);
-    };
-
-    const handleSigninGitHub = () => {
-        signwithgithub()
-    };
-
-    const handleSigninPhoneNumber = () => {
-        loginWithPhoneNumber(phoneNumber)
+    const handleCommentChange = (text, postId) => {
+        const updatedPosts = posts.map(post => {
+            if (post.id === postId) {
+                return {...post, newComment: text};
+            }
+            return post;
+        });
+        setPosts(updatedPosts);
     };
 
     return (
-        <RootSiblingParent>
-            <View style={styles.container}>
-         
-                <Text>Email</Text>
-                <TextInput style={styles.input} onChangeText={onChangeEmail} value={email}></TextInput>
-                <Text>Mot de passe</Text>
-                <TextInput style={styles.input} onChangeText={onChangePassword} value={password} secureTextEntry={true}></TextInput>
-                <TouchableOpacity style={styles.button} onPress={handleSignup}>
-                    <Text style={styles.buttonText}>Inscription</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={handleSignin}>
-                    <Text style={styles.buttonText}>Connexion</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.link} onPress={handleSigninGitHub}>
-                    <Text style={styles.linkText}>Connexion avec GitHub</Text>
-                </TouchableOpacity>
-                <br></br>
-                <Text>Numéro de téléphone</Text>
-                <TextInput style={styles.input} onChangeText={onChangePhoneNumber} value={phoneNumber}></TextInput>
-                <TouchableOpacity style={styles.link} onPress={() => loginWithPhoneNumber(phoneNumber)}>
-                    <Text style={styles.linkText}>Connexion avec téléphone</Text>
-                </TouchableOpacity>
-
-                <div id='recaptcha-container'></div>
-
-                <Text>code</Text>
-                <TextInput style={styles.input} onChangeText={onChangeCode} value={code}></TextInput>
-                <TouchableOpacity style={styles.button} onPress={() => verifyCode(code)}>
-                    <Text style={styles.buttonText}>Vérifier le code</Text>
-                </TouchableOpacity>
-
-            </View>
-        </RootSiblingParent>
-
+        <View style={styles.container}>
+            <Text>Voici la liste des postes</Text>
+            {posts.map((post) => (
+                <View key={post.id} style={styles.item}>
+                    <Text style={styles.itemTitle}>{post.title}</Text>
+                    <Text>{post.text}</Text>
+                    {post.comments.map((c, index) => (
+                        <Text key={index}>{c.email}: {c.text}</Text>
+                    ))}
+                    {user && (
+                        <>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={(text) => handleCommentChange(text, post.id)}
+                                value={post.newComment}
+                                placeholder="Add a comment..."
+                            />
+                            <Button title="Comment" onPress={() => addComment(post.id, post.newComment)} />
+                        </>
+                    )}
+                </View>
+            ))}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'whitesmoke',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 20,
+    },
+    item: {
+        borderWidth: 1,
+        borderColor: 'lightgrey',
+        padding: 10,
+        margin: 10,
+        backgroundColor: 'white',
     },
     input: {
         height: 40,
-        width: 200,
-        margin: 12,
+        width: '100%',
+        borderColor: 'gray',
         borderWidth: 1,
-        borderRadius: 20,
-        padding: 10,
+        paddingHorizontal: 10,
     },
-    button: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'blue',
-        borderRadius: 20,
-        height: 40,
-        width: 200,
-        margin: 5,
+    itemTitle: {
+        fontWeight: 'bold',
     },
-    link: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
-        margin: 5,
-    },
-    buttonText: {
-        color: '#fff',
-    },
-    linkText: {
-        color: 'blue',
-    }
 });

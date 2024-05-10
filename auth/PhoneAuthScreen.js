@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert } from 'react-native';
-import { getAuth, signInWithPhoneNumber, PhoneAuthProvider } from '@firebase/auth'; // Importer les fonctions nécessaires depuis @firebase/auth
+import { getAuth, signInWithPhoneNumber, PhoneAuthProvider } from '@firebase/auth';
 
 const PhoneAuthScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationId, setVerificationId] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
 
-  const auth = getAuth(); // Initialiser l'objet d'authentification
+  const auth = getAuth();
 
   const handleSendCode = async () => {
     try {
-      const confirmation = await signInWithPhoneNumber(auth, phoneNumber); // Utiliser signInWithPhoneNumber avec l'objet auth
+      const confirmation = await signInWithPhoneNumber(auth, phoneNumber);
       setVerificationId(confirmation.verificationId);
       Alert.alert('Code sent successfully!');
     } catch (error) {
@@ -22,8 +22,8 @@ const PhoneAuthScreen = () => {
 
   const handleVerifyCode = async () => {
     try {
-      const credential = PhoneAuthProvider.credential(verificationId, verificationCode); // Utiliser PhoneAuthProvider
-      await auth.signInWithCredential(credential); // Utiliser signInWithCredential avec l'objet auth
+      const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
+      await auth.signInWithCredential(credential);
       Alert.alert('Phone authentication successful!');
     } catch (error) {
       console.error('Error verifying code: ', error);
