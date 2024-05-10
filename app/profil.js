@@ -14,13 +14,16 @@ export default function App() {
     const [image, setImage] = useState(null);
 
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            setUser(user);
-        } else {
-            router.push("profil");
-        }
-    });
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log(user)
+                setUser(user);
+            } else {
+                setUser(null);
+            }
+        });
+    }, []);
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
